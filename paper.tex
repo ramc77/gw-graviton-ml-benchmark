@@ -28,44 +28,36 @@ Sukkur, Sindh 65170, Pakistan}
 \maketitle
 
 \begin{abstract}
-General relativity predicts that the graviton---the carrier of the
-gravitational force---is exactly massless; a broad class of theories
-beyond general relativity instead gives it a small rest mass $\mg$. A
-nonzero $\mg$ would make gravitational waves \emph{dispersive},
-imprinting a calculable, frequency-dependent phase on a binary-black-hole
-inspiral~\cite{Will1998,MirshekariYunesWill2012}, so that measuring this
-phase tests whether the graviton has mass. To carry out this test we
-employ a deep-learning approach and benchmark it against the optimal
-matched filter on a \emph{single} gravitational-wave event. This is a
-demanding regime: the strongest current bound,
-$\lamg=h/(\mg c)>1.4\times 10^{16}\,\km$, is reached only by stacking
-$\mathcal{O}(20)$ events~\cite{LVK_O3_TestsGR_PRD}, because any single
-event is buried in non-Gaussian detector noise, and whether a learned
-model can outperform matched filtering on one event has not previously
-been tested on observational strain. We inject general-relativistic and massive-graviton
-inspirals---source parameters drawn from the GWTC-4.0 catalogue,
-dispersion phase to leading order in $1/\lamg^{2}$---into LIGO H1 strain
-near GW150914 at controlled signal-to-noise ratios
+General relativity predicts a massless graviton; a broad class of
+theories beyond it gives the graviton a small rest mass $\mg$, which
+would make gravitational waves \emph{dispersive} and imprint a
+calculable, frequency-dependent phase on a binary-black-hole
+inspiral~\cite{Will1998,MirshekariYunesWill2012}. Measuring that phase
+tests whether the graviton has mass. We benchmark a deep-learning
+discriminator against the optimal matched filter on a \emph{single}
+gravitational-wave event---a demanding regime, since the strongest
+current bound, $\lamg=h/(\mg c)>1.4\times 10^{16}\,\km$, is reached only
+by stacking $\mathcal{O}(20)$ events~\cite{LVK_O3_TestsGR_PRD}, and
+whether a learned model can beat matched filtering on one event has not
+been tested on observational strain. We inject general-relativistic and
+massive-graviton inspirals---source parameters from the GWTC-4.0
+catalogue, dispersion phase to leading order in $1/\lamg^{2}$---into LIGO
+H1 strain near GW150914 at controlled signal-to-noise ratios
 $\rho_{\rm opt}\in\{20,50\}$, scan the graviton Compton wavelength
-$\lamg$, and on identical data compare two single-event discriminators:
-the \emph{oracle} matched filter, handed the true source parameters, and
-a compact ($1.7\times 10^{5}$-parameter) convolutional--transformer
+$\lamg$, and on identical data compare two discriminators: the
+\emph{oracle} matched filter, given the true source parameters, and a
+compact ($1.7\times 10^{5}$-parameter) convolutional--transformer
 classifier, given only whitened strain. On observed strain both reach
-only an area under the receiver--operator curve of AUC $=0.45$--$0.49$,
-statistically indistinguishable from each other and from chance at every
-grid cell, while two controls confirm the implementation is correct---the
-published O3 bound is reproduced, and on noise-free signals the matched
-filter separates the two classes perfectly (AUC $=1$). The single-event
-ceiling is therefore set by transient ``glitch'' noise, not by the
-choice of discriminator: at present-day signal-to-noise ratios deep
-learning offers no per-event shortcut around the noise floor that forces
-event stacking. Our contribution is this validated, openly reproducible
-benchmark---identical injections, an oracle matched-filter baseline, and
-a like-for-like learned comparison---which quantifies the single-event
-ceiling and sets a baseline against which any future claim of a learned
-single-event advantage must be measured. All code, the curated event
-list, and the result data are available at
-\url{https://github.com/ramc77/gw-graviton-ml-benchmark}.
+only AUC $=0.45$--$0.49$---indistinguishable from each other and from
+chance at every grid cell---while two controls confirm the
+implementation: the published O3 bound is reproduced, and on noise-free
+signals the matched filter separates the classes perfectly (AUC $=1$).
+The single-event ceiling is therefore set by transient ``glitch'' noise,
+not by the choice of discriminator: at present-day signal-to-noise ratios
+deep learning offers no per-event shortcut around the noise floor that
+forces event stacking. Our contribution is this validated, openly
+reproducible benchmark, which sets a baseline against which any future
+claim of a learned single-event advantage must be measured.
 \end{abstract}
 
 % =========================================================================
