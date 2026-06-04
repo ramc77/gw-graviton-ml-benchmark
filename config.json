@@ -1,0 +1,36 @@
+{
+  "random_seed": 42,
+  "results_dir": "results",
+  "figure_dpi": 300,
+  "physics_constants": {
+    "G_N": 6.6743e-11,
+    "c": 2.99792458e8,
+    "M_sun_kg": 1.98892e30,
+    "Mpc_to_m": 3.0857e22
+  },
+  "waveform": {
+    "approximant": "IMRPhenomD",
+    "f_lower_hz": 20.0,
+    "f_final_hz": 1024.0,
+    "delta_f_hz": 0.25,
+    "duration_s": 4.0,
+    "sample_rate_hz": 4096
+  },
+  "psd": {
+    "fftlength_s": 4.0,
+    "overlap_frac": 0.5,
+    "offsource_segment_s": 512
+  },
+  "massive_graviton": {
+    "lambda_g_grid_km_log10_min": 13,
+    "lambda_g_grid_km_log10_max": 18,
+    "lambda_g_grid_n": 41
+  },
+  "classifier": {
+    "n_epochs": 50,
+    "batch_size": 32,
+    "learning_rate": 3e-4,
+    "weight_decay": 1e-4,
+    "train_frac": 0.8
+  }
+}

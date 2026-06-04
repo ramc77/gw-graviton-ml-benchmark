@@ -1,0 +1,168 @@
+\begin{thebibliography}{10}
+
+\bibitem{Will1998}
+Clifford~M. Will.
+\newblock Bounding the mass of the graviton using gravitational-wave
+  observations of inspiralling compact binaries.
+\newblock {\em Physical Review D}, 57(4):2061--2068, 1998.
+
+\bibitem{MirshekariYunesWill2012}
+Saeed Mirshekari, Nicol{\'a}s Yunes, and Clifford~M. Will.
+\newblock Constraining {L}orentz-violating, modified dispersion relations with
+  gravitational waves.
+\newblock {\em Physical Review D}, 85:024041, 2012.
+
+\bibitem{LVK_O3_TestsGR_PRD}
+R.~Abbott et~al.
+\newblock Tests of general relativity with binary black holes from the second
+  {LIGO}--{V}irgo gravitational-wave transient catalog.
+\newblock {\em Physical Review D}, 103:122002, 2021.
+
+\bibitem{Aasi2015_aLIGO}
+J.~Aasi et~al.
+\newblock Advanced {LIGO}.
+\newblock {\em Classical and Quantum Gravity}, 32:074001, 2015.
+
+\bibitem{Abbott2016_GW150914}
+B.~P. Abbott et~al.
+\newblock Observation of gravitational waves from a binary black hole merger.
+\newblock {\em Physical Review Letters}, 116:061102, 2016.
+
+\bibitem{Goldhaber2010}
+Alfred~S. Goldhaber and Michael~Martin Nieto.
+\newblock Photon and graviton mass limits.
+\newblock {\em Reviews of Modern Physics}, 82:939--979, 2010.
+
+\bibitem{deRham2017}
+Claudia de~Rham, J.~Tate Deskins, Andrew~J. Tolley, and Shuang-Yong Zhou.
+\newblock Graviton mass bounds.
+\newblock {\em Reviews of Modern Physics}, 89:025004, 2017.
+
+\bibitem{Will2014}
+Clifford~M. Will.
+\newblock The confrontation between general relativity and experiment.
+\newblock {\em Living Reviews in Relativity}, 17:4, 2014.
+
+\bibitem{Abbott2016_TGR}
+B.~P. Abbott et~al.
+\newblock Tests of general relativity with {GW150914}.
+\newblock {\em Physical Review Letters}, 116:221101, 2016.
+
+\bibitem{TestGR_arXiv2112}
+R.~Abbott et~al.
+\newblock Tests of general relativity with gwtc-3.
+\newblock {\em arXiv preprint}, 2021.
+
+\bibitem{Cabero2020}
+Miriam Cabero et~al.
+\newblock {B}lip glitches in {A}dvanced {LIGO} data.
+\newblock {\em Classical and Quantum Gravity}, 36:155010, 2019.
+
+\bibitem{Nitz2018}
+Alexander~H. Nitz, Thomas Dent, Tito Dal~Canton, Stephen Fairhurst, and
+  Duncan~A. Brown.
+\newblock Detecting binary compact-object mergers with gravitational waves:
+  understanding and improving the sensitivity of the {P}y{CBC} search.
+\newblock {\em The Astrophysical Journal}, 872:195, 2019.
+
+\bibitem{Gabbard2018}
+Hunter Gabbard, Michael Williams, Fergus Hayes, and Chris Messenger.
+\newblock Matching matched filtering with deep networks for gravitational-wave
+  astronomy.
+\newblock {\em Physical Review Letters}, 120:141103, 2018.
+
+\bibitem{GeorgeHuerta2018}
+Daniel George and E.~A. Huerta.
+\newblock Deep learning for real-time gravitational wave detection and
+  parameter estimation: Results with advanced {LIGO} data.
+\newblock {\em Physics Letters B}, 778:64--70, 2018.
+
+\bibitem{Cuoco2021}
+Elena Cuoco, Jade Powell, Marco Cavagli{\`a}, et~al.
+\newblock Enhancing gravitational-wave science with machine learning.
+\newblock {\em Machine Learning: Science and Technology}, 2:011002, 2021.
+
+\bibitem{Dax2021}
+Maximilian Dax, Stephen~R. Green, Jonathan Gair, et~al.
+\newblock Real-time gravitational wave science with neural posterior
+  estimation.
+\newblock {\em Physical Review Letters}, 127:241103, 2021.
+
+\bibitem{Khan2016}
+Sebastian Khan, Sascha Husa, Mark Hannam, Frank Ohme, Michael P{\"u}rrer,
+  Xisco~Jim{\'e}nez Forteza, and Alejandro Boh{\'e}.
+\newblock Frequency-domain gravitational waves from non-precessing black-hole
+  binaries. {II}. {A} phenomenological model for the advanced detector era.
+\newblock {\em Physical Review D}, 93:044007, 2016.
+
+\bibitem{Husa2016}
+Sascha Husa, Sebastian Khan, Mark Hannam, et~al.
+\newblock Frequency-domain gravitational waves from nonprecessing black-hole
+  binaries. {I}. new numerical waveforms and anatomy of the signal.
+\newblock {\em Physical Review D}, 93:044006, 2016.
+
+\bibitem{Usman2016_PyCBC}
+Samantha~A. Usman et~al.
+\newblock The {PyCBC} search for gravitational waves from compact binary
+  coalescence.
+\newblock {\em Classical and Quantum Gravity}, 33:215004, 2016.
+
+\bibitem{LVK_GWTC4_2023}
+{LIGO Scientific Collaboration, Virgo and KAGRA Collaborations}.
+\newblock Gwtc-4.0: The fourth gravitational-wave transient catalog.
+\newblock {\em arXiv preprint}, 2023.
+
+\bibitem{GWOSC2021}
+R.~Abbott et~al.
+\newblock Open data from the first and second observing runs of advanced {LIGO}
+  and advanced virgo.
+\newblock {\em SoftwareX}, 13:100658, 2021.
+
+\bibitem{gwpy2021}
+Duncan~M. Macleod et~al.
+\newblock {GWpy}: A python package for gravitational-wave astrophysics.
+\newblock {\em SoftwareX}, 13:100657, 2021.
+
+\bibitem{Allen2012}
+Bruce Allen, Warren~G. Anderson, Patrick~R. Brady, Duncan~A. Brown, and Jolien
+  D.~E. Creighton.
+\newblock {FINDCHIRP}: An algorithm for detection of gravitational waves from
+  inspiralling compact binaries.
+\newblock {\em Physical Review D}, 85:122006, 2012.
+
+\bibitem{Cutler1994}
+Curt Cutler and {\'E}anna~E. Flanagan.
+\newblock Gravitational waves from merging compact binaries: How accurately can
+  one extract the binary's parameters from the inspiral waveform?
+\newblock {\em Physical Review D}, 49:2658--2697, 1994.
+
+\bibitem{Zevin2017}
+Michael Zevin et~al.
+\newblock Gravity {Spy}: Integrating advanced {LIGO} detector characterization,
+  machine learning, and citizen science.
+\newblock {\em Classical and Quantum Gravity}, 34:064003, 2017.
+
+\bibitem{Ashton2019}
+Gregory Ashton, Moritz H{\"u}bner, Paul~D. Lasky, et~al.
+\newblock {BILBY}: A user-friendly bayesian inference library for
+  gravitational-wave astronomy.
+\newblock {\em The Astrophysical Journal Supplement Series}, 241(2):27, 2019.
+
+\bibitem{YunesPretorius2009}
+Nicol{\'a}s Yunes and Frans Pretorius.
+\newblock Fundamental theoretical bias in gravitational-wave astrophysics and
+  the parameterised post-{E}insteinian framework.
+\newblock {\em Physical Review D}, 80:122003, 2009.
+
+\bibitem{TabNet2021}
+Sercan~O. Arik and Tomas Pfister.
+\newblock {TabNet}: Attentive interpretable tabular learning.
+\newblock {\em Proceedings of the AAAI Conference on Artificial Intelligence},
+  35:6679--6687, 2021.
+
+\bibitem{SHAP2017}
+Scott~M. Lundberg and Su-In Lee.
+\newblock A unified approach to interpreting model predictions.
+\newblock {\em Advances in Neural Information Processing Systems}, 30, 2017.
+
+\end{thebibliography}
