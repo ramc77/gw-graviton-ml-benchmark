@@ -4,7 +4,7 @@ Tests for step1_gw_classifier/data.py — injection dataset.
 Physics correctness checks:
   - achieved_snr matches target_snr within tolerance
   - GR and MG waveforms agree at large lambda_g (~1e18 km)
-  - GR and MG waveforms diverge at small lambda_g (~1e14 km)
+  - GR and MG waveforms diverge at small lambda_g (~1e12 km)
   - Whitened strain has approximately unit variance in noise-only regions
   - Labels are balanced
 """
@@ -88,11 +88,12 @@ def test_gr_and_mg_converge_at_large_lambda_g():
 
 
 def test_gr_and_mg_diverge_at_small_lambda_g():
-    """At lambda_g = 1e14 km, dispersion is dramatic -> match << 1."""
+    """At lambda_g = 1e12 km the corrected (chirp-mass-free) dispersion phase
+    is many radians across the band -> match << 1."""
     freqs, h_gr = gr_waveform_fd(36.0, 29.0, 410.0, delta_f=0.25,
                                  f_lower=20.0, f_final=1024.0)
     _, h_mg = massive_graviton_waveform_fd(
-        36.0, 29.0, 410.0, lambda_g_m=1e14 * 1e3,
+        36.0, 29.0, 410.0, lambda_g_m=1e12 * 1e3,
         delta_f=0.25, f_lower=20.0, f_final=1024.0,
     )
     psd = np.ones_like(freqs)

@@ -141,8 +141,8 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--quick", action="store_true",
                    help="Use a 1x2 (lambda_g, SNR) mini-grid for testing.")
-    p.add_argument("--n_per_class", type=int, default=1000)
-    p.add_argument("--n_epochs", type=int, default=25)
+    p.add_argument("--n_per_class", type=int, default=400)
+    p.add_argument("--n_epochs", type=int, default=12)
     p.add_argument("--out", type=str, default="results/sweep_results.json")
     args = p.parse_args()
 
@@ -150,7 +150,12 @@ def main():
         lambdas_km = [1e15]
         snrs = [20.0, 50.0]
     else:
-        lambdas_km = [1e14, 1e15, 1e16]
+        # Corrected chirp-mass-free dispersion phase: the inter-class signal
+        # scales as 1/lambda_g^2, so the grid must reach down to ~1e12-1e13 km
+        # (strong, resolvable dispersion) to exhibit the noise-free positive
+        # control and the strain transition, while 1e14-1e16 km spans the
+        # physically-relevant, noise-limited regime around the LVK O3 bound.
+        lambdas_km = [1e12, 1e13, 1e14, 1e15, 1e16]
         snrs = [20.0, 50.0]
 
     # Resume: load any existing cells and skip (lambda_g, snr) pairs already done.

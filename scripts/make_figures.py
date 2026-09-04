@@ -30,7 +30,7 @@ import numpy as np
 from step1_gw_classifier.mf_baseline import roc_from_scores
 
 SNR_VALIDATION = 35.1   # optimal SNR of the GW150914-like validation template
-LVK_O3_BOUND_KM = 1.4e16
+LVK_O3_BOUND_KM = 9.8e13   # GWTC-3: m_g <= 1.27e-23 eV/c^2  (lambda_g > 9.8e13 km)
 
 
 def load_sweep(path: str | Path = "results/sweep_results.json") -> dict:
@@ -95,7 +95,7 @@ def make_auc_figure(sweep: dict, out_dir: Path):
 
     # LVK O3 exclusion band
     ax.axvspan(LVK_O3_BOUND_KM, 1.0e18, alpha=0.08, color="C2")
-    ax.text(1.55e16, 0.62, "LVK O3 90% CL", fontsize=8, color="C2",
+    ax.text(1.15e14, 0.62, "LVK catalogue 90% CL", fontsize=8, color="C2",
             rotation=90, va="bottom")
 
     ax.set_xscale("log")
@@ -221,7 +221,7 @@ def make_validation_figure(out_dir: Path):
     ax.axhline(thresh, ls="--", color="0.4", lw=1.1,
                label=fr"detectability $1/(2\rho_{{\rm opt}}^2)={thresh:.1e}$")
     ax.axvline(LVK_O3_BOUND_KM, ls=":", color="C3", lw=1.3,
-               label=r"LVK O3 bound $\lambda_g>1.4\times10^{16}$ km")
+               label=r"LVK catalogue bound $\lambda_g>9.8\times10^{13}$ km")
     ax.set_xlabel(r"Graviton Compton wavelength $\lambda_g$ [km]")
     ax.set_ylabel(r"Mismatch $1-\mathcal{M}(\tilde{h}_{\rm GR},\tilde{h}_{\rm MG})$")
     ax.set_title(r"Validation: Mirshekari--Yunes dispersion on measured H1 PSD",

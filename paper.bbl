@@ -12,11 +12,10 @@ Saeed Mirshekari, Nicol{\'a}s Yunes, and Clifford~M. Will.
   gravitational waves.
 \newblock {\em Physical Review D}, 85:024041, 2012.
 
-\bibitem{LVK_O3_TestsGR_PRD}
+\bibitem{TestGR_arXiv2112}
 R.~Abbott et~al.
-\newblock Tests of general relativity with binary black holes from the second
-  {LIGO}--{V}irgo gravitational-wave transient catalog.
-\newblock {\em Physical Review D}, 103:122002, 2021.
+\newblock Tests of general relativity with gwtc-3.
+\newblock {\em arXiv preprint}, 2021.
 
 \bibitem{Aasi2015_aLIGO}
 J.~Aasi et~al.
@@ -47,11 +46,6 @@ Clifford~M. Will.
 B.~P. Abbott et~al.
 \newblock Tests of general relativity with {GW150914}.
 \newblock {\em Physical Review Letters}, 116:221101, 2016.
-
-\bibitem{TestGR_arXiv2112}
-R.~Abbott et~al.
-\newblock Tests of general relativity with gwtc-3.
-\newblock {\em arXiv preprint}, 2021.
 
 \bibitem{Cabero2020}
 Miriam Cabero et~al.

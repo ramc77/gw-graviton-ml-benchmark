@@ -36,8 +36,8 @@ inspiral~\cite{Will1998,MirshekariYunesWill2012}. Measuring that phase
 tests whether the graviton has mass. We benchmark a deep-learning
 discriminator against the optimal matched filter on a \emph{single}
 gravitational-wave event---a demanding regime, since the strongest
-current bound, $\lamg=h/(\mg c)>1.4\times 10^{16}\,\km$, is reached only
-by stacking $\mathcal{O}(20)$ events~\cite{LVK_O3_TestsGR_PRD}, and
+current bound, $\lamg=h/(\mg c)>9.8\times 10^{13}\,\km$, is set only
+by combining the event catalogue~\cite{TestGR_arXiv2112}, and
 whether a learned model can beat matched filtering on one event has not
 been tested on observational strain. We inject general-relativistic and
 massive-graviton inspirals---source parameters from the GWTC-4.0
@@ -48,10 +48,10 @@ $\lamg$, and on identical data compare two discriminators: the
 \emph{oracle} matched filter, given the true source parameters, and a
 compact ($1.7\times 10^{5}$-parameter) convolutional--transformer
 classifier, given only whitened strain. On observed strain both reach
-only AUC $=0.45$--$0.49$---indistinguishable from each other and from
-chance at every grid cell---while two controls confirm the
-implementation: the published O3 bound is reproduced, and on noise-free
-signals the matched filter separates the classes perfectly (AUC $=1$).
+only AUC $=0.45$--$0.50$---indistinguishable from each other and from
+chance at every grid cell---while on noise-free signals the matched
+filter separates the classes perfectly (AUC $=1$), confirming the
+implementation.
 The single-event ceiling is therefore set by transient ``glitch'' noise,
 not by the choice of discriminator: at present-day signal-to-noise ratios
 deep learning offers no per-event shortcut around the noise floor that
@@ -98,9 +98,9 @@ $\mg$ through hierarchical analysis of all events
 jointly~\cite{TestGR_arXiv2112};
 the third-observing-run combination yields a 90\% credible upper
 limit $\mg c^{2}<1.27\times 10^{-23}\,\mathrm{eV}$, or equivalently
-$\lamg=h/(\mg c)>1.4\times 10^{16}\,\km$~\cite{LVK_O3_TestsGR_PRD}. This
+$\lamg=h/(\mg c)>9.8\times 10^{13}\,\km$~\cite{TestGR_arXiv2112}. This
 bound is the catalogue-level result; the corresponding constraint from
-any single event is typically two orders of magnitude weaker, because
+any single event is roughly an order of magnitude weaker, because
 single-event matched-filter likelihoods are limited by the variance
 contributed by non-Gaussian noise transients in the LIGO
 strain~\cite{Cabero2020,Nitz2018}.
@@ -146,9 +146,9 @@ future learned methods can be measured.
 
 The paper is organised as follows. Section~\ref{sec:methods} states the
 waveform model, the injection procedure, the matched-filter baseline,
-and the classifier architecture. Section~\ref{sec:validation} establishes
-that the implementation reproduces the published O3 bound to within a
-factor consistent with single-event versus catalogue SNR scaling.
+and the classifier architecture. Section~\ref{sec:validation} checks the dispersion
+implementation and shows that the single-event detectability scale
+matches the catalogue bound to within an order of magnitude.
 Section~\ref{sec:results} reports the per-event sensitivity comparison.
 Section~\ref{sec:discussion} interprets the comparison in the context of
 the LIGO--Virgo--KAGRA glitch literature and lists explicit limitations
@@ -168,15 +168,18 @@ massive-graviton waveform $\tilde{h}_{\rm MG}(f)$ we add to the
 GR phase the Mirshekari--Yunes
 modification~\cite{MirshekariYunesWill2012},
 \begin{equation}
-  \delta\Psi_{\rm MG}(f) = -\frac{\pi^{2}\,c\,D_{L}}{\lamg^{2}\,(1+z)\,\mathcal{M}_{c}\,f},
+  \delta\Psi_{\rm MG}(f) = -\frac{\pi\,c\,D_{0}}{\lamg^{2}\,(1+z)\,f},
   \label{eq:dpsi}
 \end{equation}
-where $D_{L}$ is the luminosity distance, $\mathcal{M}_{c}=G M_{c}/c^{3}$
-is the chirp mass in seconds, and we work to leading order in
-$1/\lamg^{2}$. For the events considered ($z\lesssim 0.2$) the cosmological
-distance $D_{0}$ appearing in the original derivation reduces to
-$D_{L}/(1+z)^{2}$ at the few-percent level, and we take
-$D_{0}\!=\!D_{L}$ in Eq.~\eqref{eq:dpsi}.
+where $\lamg=h/(\mg c)$ is the graviton Compton wavelength and $D_{0}$ is
+the graviton-distance integral of Mirshekari--Yunes--Will. Equation~\eqref{eq:dpsi}
+describes a \emph{propagation} effect: it depends only on distance, $\lamg$,
+redshift and frequency, and is independent of the binary's chirp mass---the
+mass dependence cancels at the relative $1$PN (ppE $b=-1$) order at which the
+term enters (Appendix~\ref{app:phase}). The expression is dimensionless,
+$[c\,D_{0}/(\lamg^{2}f)]=1$. For the events considered ($z\lesssim 0.2$) the
+cosmological distance $D_{0}$ reduces to $D_{L}$ at the few-percent level, and
+we take $D_{0}\!=\!D_{L}$ in Eq.~\eqref{eq:dpsi}.
 The massive-graviton waveform is then
 \begin{equation}
   \tilde{h}_{\rm MG}(f) \;=\; \tilde{h}_{\rm GR}(f)\,\exp\!\left[i\,\delta\Psi_{\rm MG}(f)\right].
@@ -278,13 +281,16 @@ match $\mathcal{M}(\tilde{h}_{\rm GR},\tilde{h}_{\rm MG})$, maximised over
 time and phase, on H1 strain near GW150914 for a GW150914-like template
 ($m_{1}=36\,\msun,m_{2}=29\,\msun,D_{L}=410\,\Mpc$) and a logarithmic
 scan in $\lamg$ from $10^{13}\,\km$ to $10^{18}\,\km$. The mismatch
-$1-\mathcal{M}$ crosses the detectability threshold
-$1/(2\rho_{\rm opt}^{2})$ at $\lamg\approx 10^{16}\,\km$ for an event with
-$\rho_{\rm opt}=35.1$ (Fig.~\ref{fig:validation}). This is consistent with
-the LIGO--Virgo--KAGRA O3 constraint $\lamg>1.4\times 10^{16}\,\km$
-~\cite{LVK_O3_TestsGR_PRD}, given that the published bound is obtained
-from an effective network SNR roughly twice this value through
-catalogue stacking.
+$1-\mathcal{M}$ crosses the per-event detectability threshold
+$1/(2\rho_{\rm opt}^{2})$ at $\lamg\approx 5.9\times 10^{13}\,\km$ for this
+template ($\rho_{\rm opt}=35.1$; Fig.~\ref{fig:validation}). This single-event
+detectability scale is the same order of magnitude as the
+catalogue-combined LIGO--Virgo--KAGRA bound $\lamg>9.8\times 10^{13}\,\km$
+~\cite{TestGR_arXiv2112}, confirming that the phase is implemented with the
+correct sign, the correct $\propto\lamg^{-2}$ scaling, and the correct
+overall magnitude. The curve is used only as this internal consistency
+check: a rigorous single-event Bayesian bound is weaker than the catalogue
+result, which is why a competitive constraint requires combining many events.
 
 \begin{figure}[t]
   \centering
@@ -295,8 +301,8 @@ catalogue stacking.
     PSD used for the injection study (Sec.~\ref{sec:injections}). Dashed line: per-event
     detectability threshold $1/(2\rho_{\rm opt}^{2})$ for the optimal
     SNR $\rho_{\rm opt}=35.1$ of this template. Dotted line: the
-    LIGO--Virgo--KAGRA O3 90\% upper limit
-    $\lamg>1.4\times 10^{16}\,\km$~\cite{LVK_O3_TestsGR_PRD}.}
+    LIGO--Virgo--KAGRA catalogue 90\% upper limit
+    $\lamg>9.8\times 10^{13}\,\km$~\cite{TestGR_arXiv2112}.}
   \label{fig:validation}
 \end{figure}
 
@@ -310,21 +316,26 @@ Figure~\ref{fig:auc} shows the validation AUC of both discriminators as
 a function of $\lamg$ at the two target SNRs. The open squares are the
 signal-only control: with no strain noise added, the matched-filter
 statistic $s_{\rm MF}$ separates the GR and massive-graviton classes
-perfectly (AUC $=1.000$) at every scanned $\lamg$, because the sign of
-the log-likelihood ratio is then noise-free. This confirms that the
-discriminator and the injection pipeline are free of implementation
+near-perfectly (AUC $\gtrsim 0.99$) at every scanned $\lamg$, because the
+sign of the log-likelihood ratio is then noise-free. This confirms that
+the discriminator and the injection pipeline are free of implementation
 errors.
 
 Once the same injections are embedded in observed H1 strain, the picture
-changes completely. The oracle matched filter gives AUC $=0.46$--$0.49$
-and the convolutional--transformer classifier AUC $=0.45$--$0.48$, the
-two differing by at most $\approx 0.02$ at any cell. Every bootstrap
+changes completely. The oracle matched filter gives AUC $=0.45$--$0.50$
+and the convolutional--transformer classifier AUC $=0.46$--$0.47$, the
+two differing by at most $\approx 0.04$ at any cell. Every bootstrap
 90\% confidence interval includes the chance value $0.5$, so neither
 method achieves a statistically significant single-event detection at
 any $(\lamg,\rho_{\rm opt})$ on the grid, and the two methods are
 indistinguishable from each other. Increasing the injected SNR from
 $20$ to $50$, or decreasing $\lamg$ (which deepens the dispersion
-signature), does not lift either method off the chance line.
+signature), does not lift either method off the chance line. The null
+persists even at $\lamg=10^{12}\,\km$, where the signal-only control
+shows the two template families to be all but orthogonal (AUC $=1$): a
+dispersion signature that is trivially separable in the absence of noise
+is nonetheless undetectable on a single event once observed strain is
+present.
 
 \begin{figure}[t]
   \centering
@@ -332,19 +343,20 @@ signature), does not lift either method off the chance line.
   \caption{Single-event AUC for the oracle matched filter (squares) and
     the convolutional--transformer classifier (circles) as a function of
     $\lamg$ at two target optimal SNRs. Open squares: matched-filter
-    signal-only control (no strain noise added), pinned at unity because
-    the sign of the log-likelihood ratio is noise-free. Filled symbols:
+    signal-only control (no strain noise added), near unity
+    (AUC $\gtrsim 0.99$) because the sign of the log-likelihood ratio is
+    noise-free. Filled symbols:
     H1 strain near GW150914. Error bars: bootstrap 90\% confidence
     intervals on AUC ($1000$ resamples). Vertical band:
-    LIGO--Virgo--KAGRA O3 90\% upper limit on
-    $\lamg$~\cite{LVK_O3_TestsGR_PRD}.}
+    LIGO--Virgo--KAGRA catalogue 90\% upper limit on
+    $\lamg$~\cite{TestGR_arXiv2112}.}
   \label{fig:auc}
 \end{figure}
 
 \subsection{ROC at the most discriminative cell}
 
 Figure~\ref{fig:roc} compares the full ROC curves at the most
-favourable cell on the grid---the smallest $\lamg=10^{14}\,\km$ at the
+favourable cell on the grid---the smallest $\lamg=10^{12}\,\km$ at the
 higher SNR $\rho_{\rm opt}=50$, where the signal-only template mismatch
 is largest. Even here both curves track the chance diagonal, and their
 bootstrap 90\% confidence bands overlap each other and enclose the
@@ -370,12 +382,13 @@ dispersion signature at all. Figure~\ref{fig:control} rules this out.
 When the identical injections are presented without strain noise
 (\emph{signal only}), the same compact architecture, trained with the
 same optimiser and schedule, separates the GR and massive-graviton
-classes almost perfectly: at $N=400$ examples per class the validation
-AUC climbs from chance to $\gtrsim 0.94$ within a few epochs
-[Fig.~\ref{fig:control}(a)], and the best validation AUC approaches
-unity at every training-set size tested [Fig.~\ref{fig:control}(b)]. On
-H1 strain, by contrast, the AUC of the same network never departs from
-chance, at any epoch or any $N$. The network therefore has ample
+classes with increasing fidelity as data are added: at $N=400$ examples
+per class the noise-free validation AUC rises from chance to $\approx 1.0$
+within a few epochs [Fig.~\ref{fig:control}(a)], and the best noise-free
+AUC grows steadily with training-set size---$0.73$, $0.94$, $1.00$ at
+$N=100$, $200$, $400$ [Fig.~\ref{fig:control}(b)]. On H1 strain, by
+contrast, the AUC of the same network never departs from chance, at any
+epoch or any $N$. The network therefore has ample
 capacity to detect the inter-class difference; what defeats it on strain
 is the detector noise, not a lack of model capacity or training data.
 Increasing $N$ from $100$ to $400$ per class does not lift the strain
@@ -386,12 +399,12 @@ the noise-free matched-filter control of Fig.~\ref{fig:auc}.
 \begin{figure}[t]
   \centering
   \includegraphics[width=\columnwidth]{results/fig_classifier_control.pdf}
-  \caption{Classifier positive control at the most discriminative cell
-    ($\lamg=10^{14}\,\km$, $\rho_{\rm opt}=20$). (a)~Validation AUC
+  \caption{Classifier positive control at a resolvable-but-buried cell
+    ($\lamg=10^{13}\,\km$, $\rho_{\rm opt}=20$). (a)~Validation AUC
     versus training epoch at $N=400$ examples per class: noise-free
     (signal-only) injections (circles) versus H1 strain near GW150914
     (squares). (b)~Best validation AUC versus training-set size $N$ per
-    class. Noise-free, the network separates the classes at every $N$;
+    class. Noise-free, the network's AUC climbs toward unity as $N$ grows;
     on strain it remains at chance (dotted line). The contrast
     establishes that the null result is set by the detector noise, not
     by network capacity or training-set size.}
@@ -403,13 +416,14 @@ the noise-free matched-filter control of Fig.~\ref{fig:auc}.
 % =========================================================================
 
 The per-event AUC of the oracle matched filter on H1 strain hovers near
-$0.46$--$0.49$ across the entire scanned $(\lamg,\rho_{\rm opt})$ grid. We
+$0.45$--$0.50$ across the entire scanned $(\lamg,\rho_{\rm opt})$ grid. We
 have ruled out the possibility that this reflects an implementation
-defect: on signal-only data the same code returns AUC compatible with
-unity at all $\lamg\le 10^{16}\,\km$, and the per-event detectability
-threshold computed from Eq.~\eqref{eq:innerproduct} reproduces the
-catalogue-stacked O3 bound to within the factor expected from network
-SNR scaling (Sec.~\ref{sec:validation}). What dominates the per-event
+defect: on signal-only data the oracle matched filter separates the two
+waveform families near-perfectly (AUC $\gtrsim 0.99$) at every scanned
+$\lamg$ (open symbols, Fig.~\ref{fig:auc}), and the per-event detectability threshold
+computed from Eq.~\eqref{eq:innerproduct} places the single-event $\lamg$
+detectability scale at the same order of magnitude as the catalogue
+bound (Sec.~\ref{sec:validation}). What dominates the per-event
 discriminator on strain is the variance contributed by non-Gaussian
 features in the data --- blip glitches~\cite{Cabero2020,Zevin2017},
 harmonic lines, and short-duration transients --- whose energy partially
@@ -422,13 +436,13 @@ Figure~\ref{fig:glitch} makes this scale separation explicit. Panel~(a)
 shows the noise-free whitened GR and massive-graviton templates for a
 GW150914-like source at $\rho_{\rm opt}=20$, together with their
 difference $h_{\rm MG}-h_{\rm GR}$ on the same vertical scale. Even at
-the deepest dispersion on our grid ($\lamg=10^{14}\,\km$), the entire
+$\lamg=10^{14}\,\km$---comparable to the LVK bound---the entire
 inter-class signal that any single-event discriminator must detect peaks
-at only $\approx 1.7$ noise standard deviations. Panel~(b) shows a
+at only $\approx 0.02$ noise standard deviations. Panel~(b) shows a
 4-second segment of off-source H1 strain with the identical injection
 added, whitened on the same scale: the data are pervasively
 non-Gaussian, the loudest localised transient reaching $\approx 8\sigma$
-on a baseline already several times the inter-class difference. It is
+---orders of magnitude above the inter-class difference. It is
 this excess, and not any deficiency of the discriminator, that drives
 the single-event AUC to chance.
 
@@ -439,7 +453,7 @@ the single-event AUC to chance.
     (a)~Noise-free whitened GR template, massive-graviton template
     ($\lamg=10^{14}\,\km$), and their difference (offset below, same
     vertical scale) for a GW150914-like source at $\rho_{\rm opt}=20$;
-    the inter-class difference peaks at $\approx 1.7\sigma$.
+    the inter-class difference peaks at $\approx 0.02\sigma$.
     (b)~A 4-s off-source H1 strain segment near GW150914 with the
     identical GR injection added, whitened on the same noise scale; the
     loudest localised noise transient (marked) and the pervasively
@@ -501,13 +515,12 @@ in $1/\lamg^{2}$---into H1 strain near GW150914, we evaluated a compact
 convolutional--transformer classifier and the oracle matched filter on
 identical examples. The two methods are statistically indistinguishable
 at every $(\lamg,\rho_{\rm opt})$ cell scanned, each saturating in the
-range $\mathrm{AUC}=0.45$--$0.49$ with confidence intervals that include
-chance. Two controls confirm this is a property of the data rather than
-an implementation defect: the pipeline reproduces the published O3
-graviton-mass bound to within the factor expected from network-SNR
-scaling~\cite{LVK_O3_TestsGR_PRD}, and on noise-free signals the same
-matched filter separates the two waveform families perfectly at every
-scanned $\lamg$.
+range $\mathrm{AUC}=0.45$--$0.50$ with confidence intervals that include
+chance. A control confirms this is a property of the data rather than
+an implementation defect: on noise-free signals the same matched filter
+separates the two waveform families near-perfectly (AUC $\gtrsim 0.99$) at
+every scanned $\lamg$, and the single-event detectability scale matches
+the catalogue-combined bound in order of magnitude~\cite{TestGR_arXiv2112}.
 
 The single-event sensitivity is therefore set by non-Gaussian detector
 noise---blip glitches and short-duration transients---and not by the
@@ -602,25 +615,25 @@ University, Sukkur, Pakistan, for institutional support.
   \end{tabular}
 \end{table}
 
-\section{Mirshekari--Yunes phase derivation, units convention}\label{app:phase}
+\section{Massive-graviton dispersion phase}\label{app:phase}
 
-The dispersion relation for a massive graviton of rest mass
-$\mg$ gives a group velocity
-$v_{g}/c = \sqrt{1-(mc^{2}/E)^{2}}$ with $E=hf$. Expanding to leading
-order in $(c/\lamg f)^{2}$ gives a time delay across luminosity distance
-$D_{L}$ of $\Delta t(f) = D_{L} c/(2\lamg^{2}f^{2})$, and the resulting
-phase shift in the matched-filter convention of Eq.~\eqref{eq:innerproduct}
-is~\cite{MirshekariYunesWill2012}
+The dispersion relation for a massive graviton of rest mass $\mg$ gives a
+group velocity $v_{g}/c = \sqrt{1-(\mg c^{2}/E)^{2}}$ with $E=hf$. Writing
+$\mg c^{2}=hc/\lamg$ and expanding to leading order in $(c/\lamg f)^{2}$, a
+graviton of frequency $f$ accrues, over a propagation distance $D_{0}$, a
+delay $\Delta t(f) = D_{0}\,c/(2\lamg^{2}f^{2})$ relative to a massless one.
+The corresponding stationary-phase correction to the frequency-domain
+waveform is $\delta\Psi_{\rm MG}(f) = -2\pi f\,\Delta t(f)$, with the pieces
+constant and linear in $f$ reabsorbed into the coalescence time and phase.
+Restoring the cosmological $(1+z)$ factor~\cite{Will1998,MirshekariYunesWill2012},
 \begin{equation}
-  \delta\Psi_{\rm MG}(f) = -\frac{\pi^{2}\,c\,D_{L}}{\lamg^{2}(1+z)\mathcal{M}_{c}\,f},
+  \delta\Psi_{\rm MG}(f) = -\frac{\pi\,c\,D_{0}}{\lamg^{2}(1+z)\,f},
 \end{equation}
-with $D_{L}$ in meters, $\lamg$ in meters, $\mathcal{M}_{c}=GM_{c}/c^{3}$
-in seconds, $f$ in hertz, and $c=2.998\times 10^{8}\,\mathrm{m/s}$. The
-factor of $\mathcal{M}_{c}^{-1}$ comes from absorbing the dispersion
-into the post-Newtonian expansion at order $u^{-3}=(\pi\mathcal{M}_{c}f)^{-1}$
-and is what gives the formula the correct order of magnitude
-(microradian per cycle scales rather than micro-microradian);
-omitting it yields a phase modification four orders of magnitude too
-small to reproduce the published O3 bound.
+with $D_{0}$ in meters, $\lamg$ in meters, $f$ in hertz, and
+$c=2.998\times 10^{8}\,\mathrm{m/s}$. The expression is dimensionless and
+contains no chirp mass: graviton dispersion is a propagation effect, and the
+binary-mass dependence cancels between the ppE amplitude and the
+$(\pi\mathcal{M}_{c}f)^{-1}$ factor at the relative $1$PN ($b=-1$) order at
+which the term enters.
 
 \end{document}

@@ -10,8 +10,11 @@ noise, not by network capacity or training-set size.
 Panel (a): validation AUC vs training epoch for the classifier trained on
   (i)  noise-free (signal-only) injections  -> approaches AUC = 1,
   (ii) H1-strain injections                 -> stays at chance,
-  both at lambda_g = 1e14 km, target SNR = 20, N = 400 per class. This is the
-  classifier analogue of the matched-filter signal-only control (Fig. 2).
+  both at lambda_g = 1e13 km, target SNR = 20, N = 400 per class. This cell is
+  in the resolvable-but-buried regime: noise-free the inter-class difference is
+  order the signal amplitude (AUC -> 1), yet on strain it sits well below the
+  ~8 sigma noise transients (AUC -> chance). This is the classifier analogue of
+  the matched-filter signal-only control (Fig. 2).
 
 Panel (b): best validation AUC vs training-set size N (per class) for the same
   two regimes. On strain, more data does not lift the AUC off chance; noise
@@ -43,7 +46,7 @@ import matplotlib.pyplot as plt
 
 from step1_gw_classifier.train import train_classifier
 
-LAMBDA_G_KM = 1e14          # most discriminative cell (deep dispersion)
+LAMBDA_G_KM = 1e13          # resolvable-but-buried cell (corrected phase)
 TARGET_SNR = 20.0
 N_EPOCHS = 12
 SEED = 42
@@ -143,7 +146,7 @@ def plot(res: dict, out_dir: Path) -> None:
     axa.set_ylim(0.4, 1.03)
     axa.grid(alpha=0.3)
     axa.set_title(r"(a) Learning curves "
-                  r"($\lambda_g=10^{14}\,$km, $\rho_{\rm opt}=20$, $N=400$)",
+                  r"($\lambda_g=10^{13}\,$km, $\rho_{\rm opt}=20$, $N=400$)",
                   fontsize=10)
     axa.legend(loc="center right", fontsize=9, framealpha=0.92)
 

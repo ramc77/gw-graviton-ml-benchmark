@@ -5,25 +5,35 @@ GR + Massive-Graviton Frequency-Domain Waveform
 GR baseline: IMRPhenomD via pycbc.waveform.get_fd_waveform
   (Khan et al. 2016, PRD 93 044007; arXiv:1508.07253)
 
-Massive-graviton modification: Mirshekari, Yunes & Will 2012, PRD 85 024041
-  (arXiv:1110.2720), ppE-formalism phase term
+Massive-graviton modification: the graviton-dispersion propagation phase of
+  Will 1998 (PRD 57 2061), generalised by Mirshekari, Yunes & Will 2012
+  (PRD 85 024041; arXiv:1110.2720):
 
-    delta_Psi_MG(f) = - pi^2 c D_L / [ lambda_g^2 (1+z) M_c f ]
+    delta_Psi_MG(f) = - pi c D_0 / [ lambda_g^2 (1+z) f ]
 
   with:
-    D_L     luminosity distance [m]
+    D_0        MYW graviton-distance integral [m]; D_0 -> D_L for z << 1
     lambda_g   graviton Compton wavelength [m]
-    M_c     chirp mass in *seconds*  (M_c[s] = G M_c[kg] / c^3)
-    f       GW frequency [Hz]
+    f          GW frequency [Hz]
+    z          source redshift
+
+  This is a *propagation* effect: it depends only on distance, lambda_g,
+  redshift and frequency, and is INDEPENDENT of the binary's chirp mass. The
+  expression is dimensionless ([c D_0 / (lambda_g^2 f)] = 1) and enters at 1PN
+  relative order (ppE exponent b = -1), where the chirp mass cancels.
+
+  NOTE: the dispersion phase is INDEPENDENT of the chirp mass. A spurious
+  1/M_c factor -- delta_Psi ~ - pi^2 c D_L / [lambda_g^2 (1+z) M_c f] -- is
+  dimensionally inconsistent (rad s^-1) and ~pi/M_c too large; it must never
+  be reintroduced.
 
 The modified waveform is:
     h_MG(f) = h_GR(f) * exp(i * delta_Psi_MG(f))
 
-Numerical validation target (encoded in tests/test_waveform.py):
-    For a GW150914-like injection at SNR=20, the match
-    < h_GR | h_MG > / sqrt(<h_GR|h_GR><h_MG|h_MG>) drops below 0.99 when
-    lambda_g ~ 1e16 km, in agreement with the LVK O3 90% upper limit
-    lambda_g > 1.4e16 km (Abbott et al. 2021, PRD 103 122002).
+The single-event lambda_g reach is established numerically per event/PSD; it is
+weaker (smaller lambda_g) than the catalogue-stacked LVK O3 bound
+lambda_g > 1.4e16 km (Abbott et al. 2021, PRD 103 122002), as expected from
+coherent multi-event stacking.
 """
 from __future__ import annotations
 
@@ -52,22 +62,22 @@ def chirp_mass_seconds(m1_msun: float, m2_msun: float) -> float:
 def dispersion_phase(
     freqs: np.ndarray,
     distance_mpc: float,
-    chirp_mass_s: float,
     lambda_g_m: float,
     z: float = 0.0,
 ) -> np.ndarray:
     """
-    Mirshekari-Yunes 2012 massive-graviton phase modification, eq. (2.2).
+    Massive-graviton dispersion (propagation) phase, Will 1998 / MYW 2012.
 
-    delta_Psi(f) = - pi^2 c D_L / [ lambda_g^2 (1+z) M_c f ]
+    delta_Psi_MG(f) = - pi c D_0 / [ lambda_g^2 (1+z) f ]
 
-    For local sources (z << 1) this matches Will 1998 to leading order;
-    D_0 -> D_L. For cosmological sources use the proper D_0 integral.
+    Independent of the binary's chirp mass. For local sources (z << 1) the
+    graviton distance D_0 -> D_L (luminosity distance); for cosmological
+    sources replace D_L by the proper MYW D_0 integral.
     """
     D_L = distance_mpc * MPC_TO_M
     safe_f = np.where(freqs > 0.0, freqs, np.inf)
-    delta_psi = -(np.pi ** 2) * C_LIGHT * D_L / (
-        lambda_g_m ** 2 * (1.0 + z) * chirp_mass_s * safe_f
+    delta_psi = -np.pi * C_LIGHT * D_L / (
+        lambda_g_m ** 2 * (1.0 + z) * safe_f
     )
     return delta_psi
 
@@ -132,7 +142,6 @@ def massive_graviton_waveform_fd(
         spin1z=spin1z, spin2z=spin2z, inclination=inclination,
         approximant=approximant,
     )
-    mc_s = chirp_mass_seconds(m1_msun, m2_msun)
-    d_psi = dispersion_phase(freqs, distance_mpc, mc_s, lambda_g_m, z=z)
+    d_psi = dispersion_phase(freqs, distance_mpc, lambda_g_m, z=z)
     h_mg = h_gr * np.exp(1j * d_psi)
     return freqs, h_mg

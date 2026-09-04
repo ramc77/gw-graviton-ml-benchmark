@@ -34,7 +34,7 @@ from step1_gw_classifier.matched_filter import optimal_snr, match
 M1_MSUN, M2_MSUN = 36.0, 29.0
 DL_MPC = 410.0
 F_LOWER, F_FINAL = 20.0, 1024.0
-LAMBDA_G_KM = np.logspace(13, 18, 41)
+LAMBDA_G_KM = np.logspace(12, 18, 49)
 PRE_SECONDS = 1024
 
 
