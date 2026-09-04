@@ -94,12 +94,12 @@ def make_auc_figure(sweep: dict, out_dir: Path):
                 fontsize=8.5, color="0.25", va="bottom", style="italic")
 
     # LVK O3 exclusion band
-    ax.axvspan(LVK_O3_BOUND_KM, 1.0e18, alpha=0.08, color="C2")
+    ax.axvspan(LVK_O3_BOUND_KM, 3.0e16, alpha=0.08, color="C2")
     ax.text(1.15e14, 0.62, "LVK catalogue 90% CL", fontsize=8, color="C2",
             rotation=90, va="bottom")
 
     ax.set_xscale("log")
-    ax.set_xlim(8e12, 1.0e18)
+    ax.set_xlim(5e11, 3.0e16)
     ax.set_ylim(0.4, 1.05)
     ax.set_xlabel(r"Graviton Compton wavelength $\lambda_g$ [km]")
     ax.set_ylabel("Validation AUC")

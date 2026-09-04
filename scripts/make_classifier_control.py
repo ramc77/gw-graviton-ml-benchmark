@@ -152,8 +152,8 @@ def plot(res: dict, out_dir: Path) -> None:
 
     # ---- Panel (b): best AUC vs training-set size ----
     ns = sorted(int(k) for k in nf.keys())
-    nf_best = [nf[str(n)]["max_val_auc"] for n in ns]
-    st_best = [st[str(n)]["max_val_auc"] for n in ns]
+    nf_best = [nf[str(n)]["best_val_auc"] for n in ns]
+    st_best = [st[str(n)]["best_val_auc"] for n in ns]
     axb.plot(ns, nf_best, "o-", color="C2", lw=1.8, markersize=6,
              label="Noise-free (signal only)")
     axb.plot(ns, st_best, "s-", color="C3", lw=1.8, markersize=6,
@@ -164,6 +164,8 @@ def plot(res: dict, out_dir: Path) -> None:
     axb.set_xscale("log")
     axb.set_xticks(ns)
     axb.set_xticklabels([str(n) for n in ns])
+    import matplotlib.ticker as mticker
+    axb.xaxis.set_minor_formatter(mticker.NullFormatter())  # no spurious 3x10^2 label
     axb.set_xlabel(r"Training-set size $N$ per class")
     axb.set_ylabel("Best validation AUC")
     axb.set_ylim(0.4, 1.03)
