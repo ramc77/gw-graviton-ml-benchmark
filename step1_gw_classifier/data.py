@@ -103,19 +103,23 @@ def build_noise_reservoir(
     sample_rate: float = 4096.0,
     seg_duration_s: float = 4.0,
     psd_fft_s: float = 4.0,
+    detector: str = "H1",
 ) -> NoiseReservoir:
     """
-    Pull a long pre-event H1 segment from GWOSC; build a reservoir + PSD.
+    Pull a long pre-event strain segment from GWOSC; build a reservoir + PSD.
 
-    `pre_seconds` of strain is sampled ending 16 s before the event time.
+    `pre_seconds` of strain from `detector` (e.g. "H1", "L1") is sampled
+    ending 16 s before the event time. Varying `event_name`/`detector` gives
+    independent noise reservoirs across observing runs and interferometers,
+    used by the reservoir-robustness study (referee 1 #3).
     """
     from gwosc.datasets import event_gps
     from gwpy.timeseries import TimeSeries
 
     gps = event_gps(event_name)
-    logger.info(f"Fetching {pre_seconds} s H1 strain ending {gps-16:.0f}…")
+    logger.info(f"Fetching {pre_seconds} s {detector} strain ending {gps-16:.0f}…")
     ts = TimeSeries.fetch_open_data(
-        "H1", gps - pre_seconds - 16, gps - 16,
+        detector, gps - pre_seconds - 16, gps - 16,
         sample_rate=int(sample_rate), cache=True, verbose=False,
     )
     strain = np.asarray(ts.value, dtype=np.float64)
@@ -125,6 +129,95 @@ def build_noise_reservoir(
         strain=strain, sample_rate=sample_rate,
         seg_duration_s=seg_duration_s,
         psd_freqs=pf, psd_vals=pv,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Stationary colored-Gaussian noise reservoir (referee control)
+# ---------------------------------------------------------------------------
+
+def colored_gaussian_segment(
+    psd_vals: np.ndarray, sample_rate: float, n_t: int,
+    rng: np.random.Generator,
+) -> np.ndarray:
+    """
+    One segment of stationary colored Gaussian noise whose one-sided PSD
+    equals `psd_vals`, in the same FFT convention used by
+    estimate_psd_welch / inner_product elsewhere in the pipeline.
+
+    scipy's one-sided density PSD obeys  E|rfft(x)[k]|^2 = S(f_k)*fs*n_t/2
+    for the interior bins, so we draw rfft bins with that variance and
+    invert. DC and Nyquist are forced real (they lie outside the analysis
+    band [f_lower, f_final] and are masked in the inner product anyway).
+    The absolute normalisation is validated against estimate_psd_welch in
+    scripts/make_noise_ladder.py.
+    """
+    n_f = n_t // 2 + 1
+    S = _align_psd_to_waveform(np.asarray(psd_vals, dtype=np.float64), n_f)
+    S = np.where(np.isfinite(S) & (S > 0), S, 0.0)
+    amp = np.sqrt(S * sample_rate * n_t / 2.0)
+    re = rng.standard_normal(n_f)
+    im = rng.standard_normal(n_f)
+    spec = amp * (re + 1j * im) / np.sqrt(2.0)
+    spec[0] = amp[0] * re[0]                 # DC real
+    if n_t % 2 == 0:
+        spec[-1] = amp[-1] * re[-1]          # Nyquist real
+    return np.fft.irfft(spec, n=n_t)
+
+
+@dataclass
+class GaussianNoiseReservoir:
+    """
+    Drop-in replacement for NoiseReservoir that returns stationary colored
+    Gaussian noise with a prescribed one-sided PSD instead of slicing real
+    strain. Used for the referee-requested noise ladder
+    (signal-only -> Gaussian colored noise -> observational strain) that
+    isolates the effect of non-Gaussian, non-stationary transients.
+    """
+    sample_rate: float
+    seg_duration_s: float
+    psd_freqs: np.ndarray
+    psd_vals: np.ndarray
+
+    @property
+    def n_samples_per_seg(self) -> int:
+        return int(round(self.sample_rate * self.seg_duration_s))
+
+    def draw_segment(self, rng: np.random.Generator) -> np.ndarray:
+        return colored_gaussian_segment(
+            self.psd_vals, self.sample_rate, self.n_samples_per_seg, rng
+        )
+
+
+def split_reservoir_into_windows(res: NoiseReservoir, k: int) -> list[NoiseReservoir]:
+    """
+    Split one reservoir's strain into k contiguous, non-overlapping windows,
+    each with its OWN PSD re-estimated from that window. Yields k independent
+    noise stretches from the same underlying data — used by the reservoir
+    robustness study (referee 1 #3) to quantify how sensitive the AUC is to the
+    chosen noise stretch when fresh multi-event GWOSC fetches are unavailable.
+    """
+    from .matched_filter import estimate_psd_welch
+    n = len(res.strain)
+    w = n // k
+    out: list[NoiseReservoir] = []
+    for i in range(k):
+        seg = res.strain[i * w:(i + 1) * w]
+        pf, pv = estimate_psd_welch(seg, sample_rate=res.sample_rate,
+                                    fftlength_s=res.seg_duration_s)
+        out.append(NoiseReservoir(
+            strain=seg, sample_rate=res.sample_rate,
+            seg_duration_s=res.seg_duration_s, psd_freqs=pf, psd_vals=pv))
+    return out
+
+
+def build_gaussian_reservoir(real: NoiseReservoir) -> GaussianNoiseReservoir:
+    """A Gaussian reservoir sharing a real reservoir's measured PSD + geometry."""
+    return GaussianNoiseReservoir(
+        sample_rate=real.sample_rate,
+        seg_duration_s=real.seg_duration_s,
+        psd_freqs=real.psd_freqs,
+        psd_vals=real.psd_vals,
     )
 
 
@@ -221,6 +314,7 @@ def make_one_injection(
     dref_mpc: float = 100.0,
     return_raw: bool = False,
     noise_scale: float = 1.0,
+    noise_rng: "np.random.Generator | None" = None,
 ) -> tuple[np.ndarray, InjectionMeta] | tuple[np.ndarray, np.ndarray, InjectionMeta]:
     """
     Generate ONE injection: real noise segment + (GR or MG) signal rescaled
@@ -274,7 +368,7 @@ def make_one_injection(
 
     # 4. Real noise + signal (noise_scale=0 -> signal-only control; the
     #    segment is still drawn so the RNG stream is identical across runs)
-    noise_td = reservoir.draw_segment(rng)
+    noise_td = reservoir.draw_segment(noise_rng if noise_rng is not None else rng)
     # In case noise length differs by a sample due to rounding
     n_min = min(len(signal_td), len(noise_td))
     strain_td = noise_scale * noise_td[:n_min] + signal_td[:n_min]
@@ -305,6 +399,8 @@ def build_injection_dataset(
     seed: int = 42,
     catalog_path: Path | str = _DEFAULT_CATALOG,
     noise_scale: float = 1.0,
+    reservoir: "NoiseReservoir | GaussianNoiseReservoir | None" = None,
+    noise_seed: int | None = None,
 ) -> tuple[np.ndarray, np.ndarray, list[InjectionMeta], NoiseReservoir]:
     """
     Build a balanced binary dataset: n_per_class GR + n_per_class MG injections.
@@ -323,16 +419,20 @@ def build_injection_dataset(
     reservoir    : NoiseReservoir                       reused PSD/noise source
     """
     rng = np.random.default_rng(seed)
+    # Optional independent RNG for the noise segments only, so that source
+    # parameters (drawn from `rng`) are identical across noise conditions.
+    noise_rng = np.random.default_rng(noise_seed) if noise_seed is not None else None
     catalog = load_bbh_catalog(catalog_path)
     if not catalog:
         raise RuntimeError(f"Empty catalog at {catalog_path}")
 
-    reservoir = build_noise_reservoir(
-        event_name=reservoir_event,
-        pre_seconds=reservoir_seconds,
-        sample_rate=sample_rate,
-        seg_duration_s=seg_duration_s,
-    )
+    if reservoir is None:
+        reservoir = build_noise_reservoir(
+            event_name=reservoir_event,
+            pre_seconds=reservoir_seconds,
+            sample_rate=sample_rate,
+            seg_duration_s=seg_duration_s,
+        )
 
     n_samples_per_seg = reservoir.n_samples_per_seg
     X = np.zeros((2 * n_per_class, n_samples_per_seg), dtype=np.float32)
@@ -353,7 +453,7 @@ def build_injection_dataset(
                 x, x_raw, m = make_one_injection(
                     ev["m1"], ev["m2"], target_snr, lam,
                     reservoir, rng, f_lower=f_lower, f_final=f_final,
-                    return_raw=True, noise_scale=noise_scale,
+                    return_raw=True, noise_scale=noise_scale, noise_rng=noise_rng,
                 )
             except Exception as e:
                 logger.warning(f"Skipping injection ({ev['name']}): {e}")

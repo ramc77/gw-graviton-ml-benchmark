@@ -49,15 +49,19 @@ $\lamg$, and on identical data compare two discriminators: the
 compact ($1.7\times 10^{5}$-parameter) convolutional--transformer
 classifier, given only whitened strain. On observed strain both reach
 only AUC $=0.45$--$0.50$---indistinguishable from each other and from
-chance at every grid cell---while on noise-free signals the matched
-filter separates the classes perfectly (AUC $=1$), confirming the
-implementation.
-The single-event ceiling is therefore set by transient ``glitch'' noise,
-not by the choice of discriminator: at present-day signal-to-noise ratios
-deep learning offers no per-event shortcut around the noise floor that
-forces event stacking. Our contribution is this validated, openly
-reproducible benchmark, which sets a baseline against which any future
-claim of a learned single-event advantage must be measured.
+chance at every grid cell---whereas on noise-free signals both separate
+the classes perfectly. A noise ladder localises the cause: in stationary
+Gaussian noise of the measured power spectrum the classes stay separable
+at strong dispersion yet collapse to chance on real strain---so
+non-Gaussian ``glitches'' set the single-event limit---while near the
+observational bound the inter-class difference is itself below the
+single-event noise. For the model, training and noise studied, deep
+learning gives no per-event advantage over the Gaussian-optimal matched
+filter; since that filter is optimal only under the Gaussian likelihood, a
+method that models the non-Gaussian noise remains a route to improvement we
+do not exclude. We provide this as a validated, openly reproducible
+benchmark against which any future claim of a learned single-event
+advantage can be measured.
 \end{abstract}
 
 \noindent{\it Keywords\/}: gravitational waves, massive graviton, tests of
@@ -117,13 +121,23 @@ substantially lower inference
 cost, both on synthetic data~\cite{Gabbard2018,GeorgeHuerta2018}
 and on archival LIGO observations~\cite{Cuoco2021}; learned models now
 also perform full Bayesian parameter estimation in near real
-time~\cite{Dax2021}. The corresponding
+time~\cite{Dax2021}. More recent work has stress-tested these methods on
+realistic detector noise: community mock-data challenges benchmark learned
+searches against matched filtering on real O3 strain~\cite{Schaefer2023_MLGWSC},
+deep residual architectures are trained directly on non-stationary
+noise~\cite{Nousi2023_ResNet}, and normalising-flow inference has been made
+statistically exact through importance reweighting~\cite{Dax2023_NIS},
+together showing that modern architectures can approach matched-filter
+sensitivity for detection and parameter estimation. The corresponding
 question for the more specific task of distinguishing two waveform
 \emph{families} (here, general relativistic versus massive-graviton
 templates with otherwise identical source parameters) has, to our
 knowledge, not been examined on observational strain data, and it is this
 benchmarking question---rather than a new bound on $\mg$---that we set
-out to answer.
+out to answer. Whether single-event discrimination is limited by the
+discriminator or by the detector noise is itself an empirical question on
+real strain; answering it, and identifying \emph{which} feature of the
+noise is responsible, is part of the benchmark's value.
 
 We address that question directly. We construct
 balanced injection sets in which each example is a 4-second segment of
@@ -243,9 +257,12 @@ parameters. The discriminator is
 \end{equation}
 which in Gaussian noise is twice the log-likelihood ratio between the
 massive-graviton and general-relativistic hypotheses~\cite{Allen2012}.
-This is the strongest possible matched-filter
-test of the dispersion hypothesis on a single event: any non-oracle
-template bank produces a discriminator no more powerful than $s_{\rm MF}$.
+\emph{Under the assumed stationary-Gaussian-noise likelihood} this is the
+strongest possible matched-filter test of the dispersion hypothesis on a
+single event: any non-oracle template bank produces a discriminator no
+more powerful than $s_{\rm MF}$. In genuinely non-Gaussian data the
+statistic is no longer optimal---a distinction that turns out to be
+central to interpreting the results (Sec.~\ref{sec:discussion}).
 
 \subsection{Classifier}\label{sec:classifier}
 
@@ -414,6 +431,79 @@ the noise-free matched-filter control of Fig.~\ref{fig:auc}.
   \label{fig:control}
 \end{figure}
 
+\subsection{A noise ladder isolates the cause of the null}
+\label{sec:results:ladder}
+
+The signal-only control shows that the classes are separable in the
+absence of noise, but not \emph{which} property of the observational data
+destroys that separability. We localise it by interposing a third noise
+condition between the two extremes: stationary, colored Gaussian noise
+whose one-sided power spectrum equals the measured H1 PSD. On identical
+injections we evaluate the oracle matched filter under three
+conditions---signal only, Gaussian colored noise, and observational H1
+strain---at $\rho_{\rm opt}=50$ across the $\lamg$ grid
+(Fig.~\ref{fig:ladder}). The colored-Gaussian generator is normalised so
+that a unit-norm template projected onto pure noise has unit variance in
+the inner product of Eq.~\eqref{eq:innerproduct} (measured
+$\mathrm{Var}=0.99$); its power therefore matches the PSD the matched
+filter assumes.
+
+The ladder resolves the null into two regimes. At strong dispersion
+($\lamg\le 10^{13}\,\km$) the two waveform families are nearly orthogonal
+and their difference carries a large signal-to-noise ratio
+[$\rho_{\rm diff}=\rho_{\rm opt}\sqrt{2(1-\mathcal{M})}\approx 66$ at
+$\lamg=10^{12}\,\km$]: in Gaussian noise the oracle statistic separates
+them perfectly (AUC $=1.00$), yet on real strain it falls to chance
+(AUC $=0.50$). The loss of sensitivity there is caused specifically by the
+non-Gaussian, non-stationary content of the strain---the glitches of
+Fig.~\ref{fig:glitch}---and not by the signal, the SNR, or a Gaussian
+noise floor. At weak dispersion ($\lamg\ge 10^{14}\,\km$), near and above
+the observational bound, the inter-class difference is intrinsically small
+and the oracle statistic is at chance \emph{even in Gaussian noise}
+(AUC $=0.49$ at $\lamg=10^{14}\,\km$): there the single-event
+difference-SNR itself, not the glitch content, is the binding limit. The
+physically-relevant regime is thus doubly constrained, and the
+counter-intuitive observation that even the oracle statistic is at chance
+where the templates are nearly orthogonal is explained: the orthogonality
+is realised only in the absence of glitches.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{results/fig_noise_ladder.pdf}
+  \caption{Noise ladder: oracle matched-filter AUC versus $\lamg$ at
+    $\rho_{\rm opt}=50$ under three noise conditions on identical
+    injections---signal only (open circles), stationary colored Gaussian
+    noise with the measured H1 PSD (squares), and observational H1 strain
+    (filled circles); $90\%$ bootstrap intervals. At $\lamg\le 10^{13}\,\km$
+    the classes are trivially separable in Gaussian noise yet at chance on
+    real strain, isolating non-Gaussian transients as the cause; at
+    $\lamg\ge 10^{14}\,\km$ even Gaussian noise gives chance, the
+    inter-class difference being intrinsically too small.}
+  \label{fig:ladder}
+\end{figure}
+
+To check that the null is not an artefact of one atypical, glitch-rich
+interval, we repeat the real-strain benchmark on four independent,
+non-overlapping $\sim 4$-minute windows of the O1 H1 reservoir, each with
+its own measured PSD (Fig.~\ref{fig:robustness}). The oracle matched-filter
+AUC is $0.51\pm 0.02$ at $\lamg=10^{12}\,\km$ and $0.51\pm 0.02$ at
+$\lamg=10^{14}\,\km$ across the four windows---chance in every case---so
+the single-event null is stable against the choice of noise stretch within
+the reservoir. A wider survey across observing runs and detectors is a
+natural extension that the released analysis code supports directly.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{results/fig_noise_robustness.pdf}
+  \caption{Robustness of the null to the noise reservoir. Real-strain
+    oracle matched-filter AUC across four independent time windows of the
+    O1 H1 reservoir, at $\lamg=10^{12}\,\km$ (strong dispersion) and
+    $\lamg=10^{14}\,\km$ (near the LVK bound), $\rho_{\rm opt}=50$,
+    $N=400$ per class; $90\%$ bootstrap intervals. Every window sits at the
+    chance line.}
+  \label{fig:robustness}
+\end{figure}
+
 % =========================================================================
 \section{Discussion}\label{sec:discussion}
 % =========================================================================
@@ -468,18 +558,32 @@ the single-event AUC to chance.
 
 The convolutional--transformer classifier learns no representation that
 appreciably reduces this glitch-induced variance on the per-event task,
-at the training-set scales and SNRs studied here. This is consistent
-with the LIGO--Virgo--KAGRA practice of obtaining graviton-mass
-constraints by stacking $\mathcal{O}(20)$ events; the present
-findings would not predict a useful per-event constraint from any
-single-event learned discriminator at the SNRs of the GWTC-4.0
-catalogue.
+at the training-set scales and SNRs studied here. It is important to state
+precisely what this does and does not establish. The oracle matched
+filter is optimal only under the assumed stationary-Gaussian-noise
+likelihood, so its failure on real strain reflects the breakdown of that
+assumption rather than a fundamental single-event information bound. The
+noise ladder (Fig.~\ref{fig:ladder}) makes the point concrete: the same
+statistic that is defeated by glitches separates the classes perfectly in
+Gaussian noise of the same power spectrum. A discriminator that explicitly
+modelled the non-Gaussian, non-stationary noise---rather than assuming the
+Gaussian likelihood the matched filter is built on---could in principle
+exceed $s_{\rm MF}$ on real data, and learning such a noise model is one
+plausible route by which a per-event advantage might yet emerge; our null
+does not exclude it. What the result does establish is narrower but firm:
+for the architecture, training protocol, noise sample and SNRs studied
+here, the compact learned discriminator matches but does not beat the
+Gaussian-optimal matched filter, and neither is useful per event at
+GWTC-4.0 SNRs. This is consistent with the LIGO--Virgo--KAGRA practice of
+obtaining graviton-mass constraints by combining many events.
 
 \paragraph{Limitations.}\label{sec:limitations}
 (i) The noise reservoir is restricted to a single $\sim 17$-minute
-segment of O1 H1 strain near GW150914. Other observing runs and
-detectors carry different glitch populations; the sensitivity numbers
-do not generalise across runs without further analysis.
+segment of O1 H1 strain near GW150914. Within that reservoir the null is
+stable across independent noise windows (Fig.~\ref{fig:robustness}), but
+other observing runs and detectors carry different glitch populations, and
+the sensitivity numbers are not guaranteed to generalise across runs
+without the wider survey the released code enables.
 (ii) The matched filter is taken in oracle form (templates at the true
 source parameters). A practical bank-template search~\cite{Usman2016_PyCBC}
 or stochastic-sampling parameter estimation~\cite{Ashton2019} would
@@ -497,11 +601,12 @@ regime, because the per-event variance is set by the strain rather than
 by the training-set size. We nonetheless cannot exclude modest gains
 from substantially larger datasets or a wider sampling of the noise.
 (v) The CNN+Transformer architecture is one of many possible choices;
-specialised models trained on glitch-rich data ({\it e.g.},
-transient-aware or attention-based architectures~\cite{TabNet2021}) may
-give different results, and post-hoc attribution methods~\cite{SHAP2017}
-could localise which time--frequency features a successful discriminator
-exploits. We do not claim our architecture is optimal.
+specialised models trained on glitch-rich data---transient-aware or
+attention-based architectures, or discriminators that explicitly learn the
+non-Gaussian noise likelihood---may give different results, and post-hoc
+attribution methods~\cite{SHAP2017} could localise which time--frequency
+features a successful discriminator exploits. We do not claim our
+architecture is optimal.
 
 % =========================================================================
 \section{Conclusion}\label{sec:conclusion}
@@ -525,13 +630,15 @@ separates the two waveform families near-perfectly (AUC $\gtrsim 0.99$) at
 every scanned $\lamg$, and the single-event detectability scale matches
 the catalogue-combined bound in order of magnitude~\cite{TestGR_arXiv2112}.
 
-The single-event sensitivity is therefore set by non-Gaussian detector
-noise---blip glitches and short-duration transients---and not by the
-choice of discriminator: at the signal-to-noise ratios typical of the
-current catalogue, a learned representation offers no shortcut around
-the noise floor that obliges LIGO--Virgo--KAGRA to stack
-$\mathcal{O}(20)$ events for a useful graviton-mass
-constraint~\cite{TestGR_arXiv2112}. This is a null methodological
+In the physically-relevant regime the single-event sensitivity is
+therefore set by non-Gaussian detector noise---blip glitches and
+short-duration transients (Figs.~\ref{fig:glitch},~\ref{fig:ladder})---rather
+than by the choice between the two discriminators studied: for this
+architecture, training protocol and the SNRs typical of the current
+catalogue, the learned representation matches but does not beat the
+Gaussian-optimal matched filter, and neither offers a shortcut around the
+noise floor that obliges LIGO--Virgo--KAGRA to combine many events for a
+useful graviton-mass constraint~\cite{TestGR_arXiv2112}. This is a null methodological
 result, and it delimits where future gains must originate. A per-event
 advantage for deep learning, if one exists, would most plausibly emerge
 from representations trained explicitly to be robust against glitches,

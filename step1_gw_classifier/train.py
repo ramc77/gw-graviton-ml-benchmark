@@ -22,7 +22,9 @@ from loguru import logger
 from tqdm import tqdm
 
 from .data import build_injection_dataset
-from .model import build_model, build_compact_model
+from .model import (
+    build_model, build_compact_model, build_resnet1d, build_compact_resnet1d,
+)
 from .mf_baseline import roc_from_scores
 
 
@@ -83,6 +85,7 @@ def train_classifier(
     reservoir_seconds: int = 1024,
     reservoir_event: str = "GW150914",
     compact: bool = False,
+    arch: str = "cnn_transformer",
     noise_scale: float = 1.0,
     device: str | None = None,
 ) -> dict:
@@ -124,10 +127,13 @@ def train_classifier(
 
     # 2. Model
     seq_len = X.shape[1]
-    builder = build_compact_model if compact else build_model
+    if arch == "resnet":
+        builder = build_compact_resnet1d if compact else build_resnet1d
+    else:
+        builder = build_compact_model if compact else build_model
     model = builder(seq_len).to(device)
     n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    logger.info(f"Model parameters: {n_params:,}")
+    logger.info(f"Model [{arch}] parameters: {n_params:,}")
 
     optimiser = torch.optim.AdamW(model.parameters(), lr=learning_rate,
                                   weight_decay=weight_decay)
@@ -169,6 +175,7 @@ def train_classifier(
         "val_scores": vscores,
         "val_labels": vy,
         "n_params": n_params,
+        "arch": arch,
         "lambda_g_km": lambda_g_km,
         "target_snr": target_snr,
     }

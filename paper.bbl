@@ -82,6 +82,24 @@ Maximilian Dax, Stephen~R. Green, Jonathan Gair, et~al.
   estimation.
 \newblock {\em Physical Review Letters}, 127:241103, 2021.
 
+\bibitem{Schaefer2023_MLGWSC}
+Marlin~B. Sch{\"a}fer, Ond{\v r}ej Zelenka, Alexander~H. Nitz, et~al.
+\newblock {MLGWSC-1}: The first machine learning gravitational-wave search mock
+  data challenge.
+\newblock {\em Physical Review D}, 107:023021, 2023.
+
+\bibitem{Nousi2023_ResNet}
+Paraskevi Nousi, Alexandra~E. Koloniari, Nikolaos Passalis, Panagiotis Iosif,
+  Nikolaos Stergioulas, and Anastasios Tefas.
+\newblock Deep residual networks for gravitational wave detection.
+\newblock {\em Physical Review D}, 108:024022, 2023.
+
+\bibitem{Dax2023_NIS}
+Maximilian Dax, Stephen~R. Green, Jonathan Gair, et~al.
+\newblock Neural importance sampling for rapid and reliable gravitational-wave
+  inference.
+\newblock {\em Physical Review Letters}, 130:171403, 2023.
+
 \bibitem{Khan2016}
 Sebastian Khan, Sascha Husa, Mark Hannam, Frank Ohme, Michael P{\"u}rrer,
   Xisco~Jim{\'e}nez Forteza, and Alejandro Boh{\'e}.
@@ -147,12 +165,6 @@ Nicol{\'a}s Yunes and Frans Pretorius.
 \newblock Fundamental theoretical bias in gravitational-wave astrophysics and
   the parameterised post-{E}insteinian framework.
 \newblock {\em Physical Review D}, 80:122003, 2009.
-
-\bibitem{TabNet2021}
-Sercan~O. Arik and Tomas Pfister.
-\newblock {TabNet}: Attentive interpretable tabular learning.
-\newblock {\em Proceedings of the AAAI Conference on Artificial Intelligence},
-  35:6679--6687, 2021.
 
 \bibitem{SHAP2017}
 Scott~M. Lundberg and Su-In Lee.
