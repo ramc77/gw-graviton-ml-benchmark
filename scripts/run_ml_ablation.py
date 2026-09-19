@@ -82,8 +82,11 @@ def make_ablation_figure(rows: list[dict], out_dir: Path) -> None:
                         capsize=3, lw=1.6, ms=6, label=f"{names.get(arch, arch)} (H1 strain)")
         so = [r for r in rows if r["arch"] == arch and r["condition"] == "signal_only"]
         if so:
-            ax.scatter([so[0]["n_per_class"]], [so[0]["auc_mean"]], marker="*",
-                       s=120, color=colors.get(arch, "C2"), edgecolor="k", zorder=5,
+            # small horizontal dodge so the two signal-only stars do not overlap
+            star_dodge = {"cnn_transformer": 0.88, "resnet": 1.14}.get(arch, 1.0)
+            ax.scatter([so[0]["n_per_class"] * star_dodge], [so[0]["auc_mean"]],
+                       marker="*", s=170, color=colors.get(arch, "C2"),
+                       edgecolor="k", linewidth=0.8, zorder=6,
                        label=f"{names.get(arch, arch)} (signal only)")
     ax.axhline(0.5, ls=":", color="0.4", lw=1.0, label="chance")
     ax.set_xscale("log")
@@ -96,7 +99,7 @@ def make_ablation_figure(rows: list[dict], out_dir: Path) -> None:
     ax.set_ylabel("Best validation AUC")
     ax.set_ylim(0.4, 1.045)
     ax.grid(alpha=0.3, which="both")
-    ax.legend(loc="center left", fontsize=8.5, framealpha=0.93)
+    ax.legend(loc="upper right", fontsize=8.5, framealpha=0.93)
     fig.tight_layout()
     out_dir.mkdir(exist_ok=True)
     fig.savefig(out_dir / "fig_ml_ablation.pdf", dpi=300)
