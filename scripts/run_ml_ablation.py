@@ -87,6 +87,11 @@ def make_ablation_figure(rows: list[dict], out_dir: Path) -> None:
                        label=f"{names.get(arch, arch)} (signal only)")
     ax.axhline(0.5, ls=":", color="0.4", lw=1.0, label="chance")
     ax.set_xscale("log")
+    ns = sorted({r["n_per_class"] for r in rows})
+    ax.set_xticks(ns)
+    ax.set_xticklabels([str(n) for n in ns])
+    import matplotlib.ticker as mticker
+    ax.xaxis.set_minor_formatter(mticker.NullFormatter())   # clean N ticks only
     ax.set_xlabel(r"Training-set size $N$ per class")
     ax.set_ylabel("Best validation AUC")
     ax.set_ylim(0.4, 1.045)
