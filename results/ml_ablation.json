@@ -1,0 +1,177 @@
+{
+  "config": {
+    "archs": [
+      "cnn_transformer",
+      "resnet"
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "n_grid": [
+      400,
+      1000,
+      2000
+    ],
+    "epochs": 30,
+    "batch_size": 32,
+    "lambda_g_km": 10000000000000.0,
+    "target_snr": 20.0,
+    "compact": false,
+    "quick": false,
+    "out": "results/ml_ablation.json"
+  },
+  "rows": [
+    {
+      "arch": "cnn_transformer",
+      "n_per_class": 400,
+      "condition": "strain",
+      "seeds": [
+        0,
+        1
+      ],
+      "aucs": [
+        0.416588492808005,
+        0.5269573370839193
+      ],
+      "auc_mean": 0.4717729149459622,
+      "auc_std": 0.055184422137957184
+    },
+    {
+      "arch": "cnn_transformer",
+      "n_per_class": 400,
+      "condition": "signal_only",
+      "seeds": [
+        0
+      ],
+      "aucs": [
+        0.9990619136960601
+      ],
+      "auc_mean": 0.9990619136960601,
+      "auc_std": 0.0
+    },
+    {
+      "arch": "resnet",
+      "n_per_class": 400,
+      "condition": "strain",
+      "seeds": [
+        0,
+        1
+      ],
+      "aucs": [
+        0.4206535334584115,
+        0.6173620878262229
+      ],
+      "auc_mean": 0.5190078106423173,
+      "auc_std": 0.09835427718390571
+    },
+    {
+      "arch": "resnet",
+      "n_per_class": 400,
+      "condition": "signal_only",
+      "seeds": [
+        0
+      ],
+      "aucs": [
+        1.0
+      ],
+      "auc_mean": 1.0,
+      "auc_std": 0.0
+    },
+    {
+      "arch": "cnn_transformer",
+      "n_per_class": 1000,
+      "condition": "strain",
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "aucs": [
+        0.5382625,
+        0.47426775612822125,
+        0.5094966880770774
+      ],
+      "auc_mean": 0.5073423147350996,
+      "auc_std": 0.026170120419747263
+    },
+    {
+      "arch": "cnn_transformer",
+      "n_per_class": 2000,
+      "condition": "strain",
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "aucs": [
+        0.5199051155115512,
+        0.5076426427371296,
+        0.47388290591345755
+      ],
+      "auc_mean": 0.5004768880540461,
+      "auc_std": 0.01945973576741326
+    },
+    {
+      "arch": "cnn_transformer",
+      "n_per_class": 2000,
+      "condition": "signal_only",
+      "seeds": [
+        0
+      ],
+      "aucs": [
+        0.5
+      ],
+      "auc_mean": 0.5,
+      "auc_std": 0.0
+    },
+    {
+      "arch": "resnet",
+      "n_per_class": 1000,
+      "condition": "strain",
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "aucs": [
+        0.5086499999999999,
+        0.5494154619736015,
+        0.5137369530309113
+      ],
+      "auc_mean": 0.5239341383348376,
+      "auc_std": 0.018137303430081072
+    },
+    {
+      "arch": "resnet",
+      "n_per_class": 2000,
+      "condition": "strain",
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "aucs": [
+        0.5360567306730672,
+        0.5251618830666223,
+        0.5221449956560056
+      ],
+      "auc_mean": 0.5277878697985651,
+      "auc_std": 0.005975279493239322
+    },
+    {
+      "arch": "resnet",
+      "n_per_class": 2000,
+      "condition": "signal_only",
+      "seeds": [
+        0
+      ],
+      "aucs": [
+        0.5
+      ],
+      "auc_mean": 0.5,
+      "auc_std": 0.0
+    }
+  ]
+}

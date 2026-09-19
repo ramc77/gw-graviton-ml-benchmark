@@ -431,6 +431,43 @@ the noise-free matched-filter control of Fig.~\ref{fig:auc}.
   \label{fig:control}
 \end{figure}
 
+\subsection{Robustness to architecture, seed, and training-set size}
+\label{sec:results:ablation}
+
+Two further controls test whether the null is specific to the compact
+model or to the modest training sets used above. At the resolvable cell
+($\lamg=10^{13}\,\km$, $\rho_{\rm opt}=20$) we repeat the strain benchmark
+with (i)~a second, established architecture---a 1D residual CNN of the type
+standard in gravitational-wave detection~\cite{Gabbard2018,Nousi2023_ResNet},
+of comparable size ($\sim 5\times 10^{6}$ parameters)---alongside the
+CNN+Transformer; (ii)~three independent random seeds per configuration; and
+(iii)~training sets enlarged to $N=1000$ and $N=2000$ per class, five times
+the size used in the main sweep (Fig.~\ref{fig:ablation}). Both
+architectures reach $\mathrm{AUC}\approx 1$ on noise-free signals,
+confirming that each can learn the dispersion signature. On H1 strain both
+remain at chance at every training size and seed: the mean validation AUC
+is $0.51\pm 0.03$ (CNN+Transformer) and $0.52\pm 0.02$ (ResNet) at
+$N=1000$, and $0.50\pm 0.02$ and $0.53\pm 0.01$ at $N=2000$. Neither a
+second, established architecture nor a five-fold increase in training data
+shifts the single-event strain AUC away from chance---confirming that the
+null is a property of the data rather than of model capacity,
+initialisation, or training-set size.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{results/fig_ml_ablation.pdf}
+  \caption{Architecture, seed, and training-size ablation at
+    $\lamg=10^{13}\,\km$, $\rho_{\rm opt}=20$. Best validation AUC versus
+    training-set size for the compact CNN+Transformer (blue) and an
+    established 1D ResNet baseline (orange) on H1 strain (circles, mean over
+    three seeds; error bars $\pm 1\sigma$), with the noise-free capability
+    control for each architecture (stars, AUC $\approx 1$). Both
+    architectures remain at the chance line (dotted) on strain for all
+    training sizes up to $N=2000$ per class, while both separate the classes
+    perfectly in the absence of noise.}
+  \label{fig:ablation}
+\end{figure}
+
 \subsection{A noise ladder isolates the cause of the null}
 \label{sec:results:ladder}
 
@@ -459,9 +496,9 @@ non-Gaussian, non-stationary content of the strain---the glitches of
 Fig.~\ref{fig:glitch}---and not by the signal, the SNR, or a Gaussian
 noise floor. At weak dispersion ($\lamg\ge 10^{14}\,\km$), near and above
 the observational bound, the inter-class difference is intrinsically small
-and the oracle statistic is at chance \emph{even in Gaussian noise}
-(AUC $=0.49$ at $\lamg=10^{14}\,\km$): there the single-event
-difference-SNR itself, not the glitch content, is the binding limit. The
+and the Gaussian-noise AUC itself falls---to $0.56$ at $\lamg=10^{14}\,\km$
+and to chance ($\approx 0.49$) by $\lamg=10^{15}\,\km$---so there the
+single-event difference-SNR, not the glitch content, is the binding limit. The
 physically-relevant regime is thus doubly constrained, and the
 counter-intuitive observation that even the oracle statistic is at chance
 where the templates are nearly orthogonal is explained: the orthogonality
@@ -477,8 +514,8 @@ is realised only in the absence of glitches.
     (filled circles); $90\%$ bootstrap intervals. At $\lamg\le 10^{13}\,\km$
     the classes are trivially separable in Gaussian noise yet at chance on
     real strain, isolating non-Gaussian transients as the cause; at
-    $\lamg\ge 10^{14}\,\km$ even Gaussian noise gives chance, the
-    inter-class difference being intrinsically too small.}
+    $\lamg\ge 10^{14}\,\km$ the Gaussian-noise AUC itself falls toward
+    chance as the inter-class difference becomes intrinsically too small.}
   \label{fig:ladder}
 \end{figure}
 
@@ -571,9 +608,10 @@ Gaussian likelihood the matched filter is built on---could in principle
 exceed $s_{\rm MF}$ on real data, and learning such a noise model is one
 plausible route by which a per-event advantage might yet emerge; our null
 does not exclude it. What the result does establish is narrower but firm:
-for the architecture, training protocol, noise sample and SNRs studied
-here, the compact learned discriminator matches but does not beat the
-Gaussian-optimal matched filter, and neither is useful per event at
+for the two architectures, training protocol, noise sample and SNRs studied
+here---and across three seeds and training sets up to $N=2000$ per class
+(Fig.~\ref{fig:ablation})---the learned discriminators match but do not beat
+the Gaussian-optimal matched filter, and neither is useful per event at
 GWTC-4.0 SNRs. This is consistent with the LIGO--Virgo--KAGRA practice of
 obtaining graviton-mass constraints by combining many events.
 
@@ -593,20 +631,22 @@ the classifier.
 (iii) We use leading-order Mirshekari--Yunes dispersion only; subleading
 effects on merger and ringdown morphology~\cite{YunesPretorius2009} are
 not modelled.
-(iv) The training set size ($N\!=\!800$ examples per cell) is small by
-GW deep-learning standards~\cite{GeorgeHuerta2018,Gabbard2018}; the
-training-set-size study of Fig.~\ref{fig:control}(b) shows the
-single-event sensitivity already saturated with respect to $N$ in this
-regime, because the per-event variance is set by the strain rather than
-by the training-set size. We nonetheless cannot exclude modest gains
-from substantially larger datasets or a wider sampling of the noise.
-(v) The CNN+Transformer architecture is one of many possible choices;
-specialised models trained on glitch-rich data---transient-aware or
-attention-based architectures, or discriminators that explicitly learn the
-non-Gaussian noise likelihood---may give different results, and post-hoc
-attribution methods~\cite{SHAP2017} could localise which time--frequency
-features a successful discriminator exploits. We do not claim our
-architecture is optimal.
+(iv) The training sets are small by GW deep-learning
+standards~\cite{GeorgeHuerta2018,Gabbard2018}; the training-set-size study
+of Fig.~\ref{fig:control}(b) and the ablation of Fig.~\ref{fig:ablation},
+which enlarges $N$ to $2000$ per class (five times the main sweep), both
+show the single-event strain AUC already saturated at chance, because the
+per-event variance is set by the strain rather than by the training-set
+size. We cannot formally exclude modest gains from still larger datasets
+or a wider sampling of the noise, but they appear unlikely in this regime.
+(v) The learned discriminators are two of many possible choices; we tested
+an established 1D ResNet alongside the CNN+Transformer and found the same
+null (Fig.~\ref{fig:ablation}), but specialised models trained on
+glitch-rich data---transient-aware or attention-based architectures, or
+discriminators that explicitly learn the non-Gaussian noise likelihood---may
+give different results, and post-hoc attribution methods~\cite{SHAP2017}
+could localise which time--frequency features a successful discriminator
+exploits. We do not claim our architectures are optimal.
 
 % =========================================================================
 \section{Conclusion}\label{sec:conclusion}
@@ -633,9 +673,9 @@ the catalogue-combined bound in order of magnitude~\cite{TestGR_arXiv2112}.
 In the physically-relevant regime the single-event sensitivity is
 therefore set by non-Gaussian detector noise---blip glitches and
 short-duration transients (Figs.~\ref{fig:glitch},~\ref{fig:ladder})---rather
-than by the choice between the two discriminators studied: for this
-architecture, training protocol and the SNRs typical of the current
-catalogue, the learned representation matches but does not beat the
+than by the choice between the two discriminators studied: for the two
+architectures, training protocol and the SNRs typical of the current
+catalogue, the learned representations match but do not beat the
 Gaussian-optimal matched filter, and neither offers a shortcut around the
 noise floor that obliges LIGO--Virgo--KAGRA to combine many events for a
 useful graviton-mass constraint~\cite{TestGR_arXiv2112}. This is a null methodological
